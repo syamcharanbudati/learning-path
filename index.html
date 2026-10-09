@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LearnPath – Role-based video learning</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f8fafc;--surface:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--brand:#4f46e5;--brand-soft:#eef2ff;--shadow:0 1px 2px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.06)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1020;--surface:#131a2e;--text:#e8ecf5;--muted:#93a0ba;--line:#222c47;--brand:#818cf8;--brand-soft:#1b2347;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3)}}
+:root[data-theme="dark"]{--bg:#0b1020;--surface:#131a2e;--text:#e8ecf5;--muted:#93a0ba;--line:#222c47;--brand:#818cf8;--brand-soft:#1b2347;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.3)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+header{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.nav{max-width:1120px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;cursor:pointer;border:0;background:none;color:var(--text);padding:0;font-family:inherit}
+.logo i{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#4f46e5,#06b6d4);display:grid;place-items:center;color:#fff;font-style:normal;font-size:.9rem}
+.search{flex:1;max-width:380px;margin-left:auto}
+.search input{width:100%;padding:9px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font:inherit;font-size:.9rem}
+.search input:focus{outline:2px solid var(--brand);outline-offset:0}
+main{max-width:1120px;margin:0 auto;padding:36px 20px 64px}
+.hero{padding:12px 0 28px}
+.hero .eyebrow{color:var(--brand);font-weight:600;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase}
+.hero h1{font-size:clamp(1.9rem,4vw,2.8rem);line-height:1.15;margin:8px 0 12px;letter-spacing:-.02em}
+.hero p{color:var(--muted);max-width:560px;margin:0 0 20px;font-size:1.05rem}
+.stats{display:flex;gap:28px;flex-wrap:wrap}
+.stats div b{display:block;font-size:1.4rem}
+.stats div span{color:var(--muted);font-size:.85rem}
+h2{font-size:1.15rem;margin:30px 0 14px}
+.roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.role{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;cursor:pointer;text-align:left;color:inherit;font:inherit;box-shadow:var(--shadow);transition:transform .15s,border-color .15s;display:flex;flex-direction:column;gap:6px}
+.role:hover{transform:translateY(-3px);border-color:var(--brand)}
+.badge-ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem;margin-bottom:6px}
+.role h3{margin:0;font-size:1.05rem}
+.role p{margin:0;color:var(--muted);font-size:.88rem;flex:1}
+.role .foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:.8rem;color:var(--muted)}
+.role .foot em{font-style:normal;color:var(--brand);font-weight:600}
+.crumbs{font-size:.88rem;color:var(--muted);margin-bottom:14px}
+.crumbs button{background:none;border:0;color:var(--brand);cursor:pointer;font:inherit;padding:0;font-weight:600}
+.rhead{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.rhead h1{margin:0;font-size:1.9rem;letter-spacing:-.02em}
+.rhead p{margin:4px 0 0;color:var(--muted);max-width:560px}
+.progress{margin:18px 0 6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.progress .row{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted);margin-bottom:8px}
+.track{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,#4f46e5,#06b6d4);width:0;transition:width .3s}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:99px;padding:6px 14px;cursor:pointer;font:inherit;font-size:.85rem}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.vid{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform .15s;position:relative}
+.vid:hover{transform:translateY(-3px)}
+.thumb{aspect-ratio:16/9;display:grid;place-items:center;position:relative}
+.play{position:relative;z-index:1;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.92);color:#0f172a;display:grid;place-items:center;font-size:1.1rem;padding-left:3px}
+.ti{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.lvl{z-index:1;position:absolute;top:10px;left:10px;font-size:.7rem;font-weight:600;padding:3px 9px;border-radius:99px;background:rgba(15,23,42,.7);color:#fff}
+.meta{padding:14px 16px 16px}
+.meta b{display:block;font-size:.95rem;line-height:1.35;margin-bottom:4px}
+.meta .by{color:var(--muted);font-size:.82rem}
+.watch{margin-top:12px;display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);background:none;border:0;cursor:pointer;padding:0;font-family:inherit}
+.watch .cb{width:16px;height:16px;border:1.5px solid var(--muted);border-radius:4px;display:grid;place-items:center;font-size:.65rem;color:#fff}
+.vid.done .cb{background:#16a34a;border-color:#16a34a}
+.vid.done .watch{color:#16a34a}
+.phase{margin-bottom:34px}
+.ph-head{margin-bottom:14px;padding-left:14px;border-left:3px solid var(--brand)}
+.ph-n{font-size:.75rem;font-weight:700;color:var(--brand);text-transform:uppercase;letter-spacing:.06em}
+.ph-m{font-size:.8rem;color:var(--muted);margin-left:8px}
+.ph-head h3{margin:2px 0 4px;font-size:1.15rem}
+.ph-head p{margin:0;color:var(--muted);font-size:.9rem;max-width:640px}
+.yt{display:inline-block;margin-top:10px;margin-right:14px;font-size:.8rem;font-weight:600;color:var(--brand);text-decoration:none}
+.btn{display:inline-block;background:var(--brand);color:#fff!important;padding:8px 14px;border-radius:8px;text-decoration:none;font-weight:600;font-size:.85rem}
+.player{aspect-ratio:16/9;background:#000}
+.player iframe{width:100%;height:100%;border:0;display:block}
+.tl{display:block;color:inherit;text-decoration:none}
+.more{display:inline-flex;margin-top:26px;color:var(--brand);font-weight:600;text-decoration:none}
+.empty{color:var(--muted);padding:24px 0}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:.82rem;text-align:center;padding:22px}
+#modal{position:fixed;inset:0;background:rgba(2,6,23,.78);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+#modal.open{display:flex}
+.box{width:min(920px,100%);background:var(--surface);border-radius:16px;padding:16px}
+.box iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:10px;background:#000}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.x{background:none;border:0;color:var(--text);font-size:1.3rem;cursor:pointer}
+.box a{color:var(--brand);font-size:.85rem}
+</style>
+</head>
+<body>
+<header><div class="nav">
+  <button class="logo" id="logo"><i>▶</i>LearnPath</button>
+  <div class="search"><input id="q" type="search" placeholder="Search videos across all roles…" aria-label="Search videos"></div>
+</div></header>
+
+<main>
+  <section id="home">
+    <div class="hero">
+      <div class="eyebrow">Curated video learning</div>
+      <h1>Learn the skills behind the role you want.</h1>
+      <p>Pick a field, choose a role inside it, and follow a hand-picked set of videos from fundamentals to advanced topics.</p>
+      <div class="stats" id="stats"></div>
+    </div>
+    <h2>Choose a field</h2>
+    <div class="roles" id="roles"></div>
+  </section>
+
+  <section id="field" hidden>
+    <div class="crumbs"><button id="b0">All fields</button> / <span id="fcrumb"></span></div>
+    <div class="rhead">
+      <div class="badge-ic" id="fico" style="width:56px;height:56px;font-size:1.6rem"></div>
+      <div><h1 id="ftitle"></h1><p id="fdesc"></p></div>
+    </div>
+    <h2>Choose a role</h2>
+    <div class="roles" id="froles"></div>
+  </section>
+
+  <section id="detail" hidden>
+    <div class="crumbs"><button id="b1">All fields</button> / <button id="b2"></button> / <span id="crumb"></span></div>
+    <div class="rhead">
+      <div class="badge-ic" id="rico" style="width:56px;height:56px;font-size:1.6rem"></div>
+      <div><h1 id="rtitle"></h1><p id="rdesc"></p></div>
+    </div>
+    <div class="progress"><div class="row"><span>Your progress</span><span id="ptext"></span></div><div class="track"><div class="fill" id="fill"></div></div></div>
+    <div class="filters" id="filters"></div>
+    <div class="grid" id="grid"></div>
+    <a class="more" id="more" target="_blank" rel="noopener">Explore more on YouTube →</a>
+  </section>
+
+  <section id="results" hidden>
+    <h2 id="rtext"></h2>
+    <div class="grid" id="rgrid"></div>
+  </section>
+</main>
+<footer>LearnPath demo · Videos are hosted on YouTube and belong to their creators.</footer>
+
+<div id="modal"><div class="box">
+  <div class="bar"><b id="mtitle"></b><button class="x" id="close" aria-label="Close">✕</button></div>
+  <iframe id="player" allowfullscreen allow="accelerometer; autoplay; encrypted-media; picture-in-picture" title="Video player"></iframe>
+  <p style="margin:12px 0 0"><a id="ytlink" class="btn" target="_blank" rel="noopener">▶ Open this video on YouTube</a> <span style="color:var(--muted);font-size:.8rem">If the player above is blank, use this link.</span></p>
+</div></div>
+
+<script>
+const V=(id,title,by,level)=>({id,title,by,level});
+const P=(p,v)=>({...v,p});
+const S=(id,q,title,level)=>({id,q,title,by:"YouTube search",level});
+const FIELDS={
+"software":{icon:"💻",title:"Software Engineering",bg:"#e0e7ff",c1:"#4338ca",c2:"#1e1b4b",desc:"Design, build and maintain reliable software systems.",roles:{
+  "ai-engineer":{icon:"🤖",title:"AI Engineer",desc:"Build applications powered by machine learning and LLMs.",q:"AI engineer roadmap",
+  phases:[
+   {n:1,months:"Months 1–2",title:"Python and programming fundamentals",desc:"Learn Python, functions, lists, dictionaries, OOP, basic DSA, and Git/GitHub."},
+   {n:2,months:"Months 3–4",title:"Mathematics and data science",desc:"Learn NumPy, pandas, visualization, probability, statistics, and basic linear algebra."},
+   {n:3,months:"Months 5–7",title:"Machine learning",desc:"Build models, evaluate predictions, and complete two small ML projects."},
+   {n:4,months:"Months 8–9",title:"Deep learning",desc:"Learn neural networks and complete a computer vision or text-classification project."},
+   {n:5,months:"Months 10–12",title:"Generative AI and deployment",desc:"Build an LLM-based application, learn RAG and APIs, deploy projects, and prepare for interviews."}],
+  videos:[
+    P(1,V("rfscVS0vtbw","Learn Python – Full Course for Beginners","freeCodeCamp","Beginner")),
+    P(1,V("RGOj5yH7evk","Git and GitHub for Beginners","freeCodeCamp","Beginner")),
+    P(1,V("RBSGKlAvoiM","Data Structures Easy to Advanced","William Fiset","Advanced")),
+        P(2,V("QUT1VHiLmmI","NumPy Tutorial for Beginners","freeCodeCamp (Keith Galli)","Beginner")),
+        P(2,V("gtjxAH8uaP0","Pandas & Python for Data Analysis – Full Course","freeCodeCamp (Santiago Basulto)","Beginner")),
+        P(2,V("r-uOLxNrNk8","Data Analysis with Python – Pandas, Matplotlib, Seaborn","freeCodeCamp (Santiago Basulto)","Beginner")),
+    P(2,V("fNk_zzaMoSs","Vectors: Essence of Linear Algebra","3Blue1Brown","Beginner")),
+        P(3,V("i_LwzRVP7bg","Machine Learning for Everybody – Full Course","freeCodeCamp (Kylie Ying)","Beginner")),
+    P(4,V("aircAruvnKk","But what is a neural network?","3Blue1Brown","Beginner")),
+    P(4,V("VMj-3S1tku0","The spelled-out intro to neural networks and backpropagation: micrograd","Andrej Karpathy","Beginner")),
+        P(4,V("V_xro1bcAuA","PyTorch for Deep Learning & Machine Learning – Full Course","freeCodeCamp (Daniel Bourke)","Advanced")),
+    P(5,V("zjkBMFhNj_g","Intro to Large Language Models","Andrej Karpathy","Beginner")),
+        P(5,V("tLKKmouUams","FastAPI Course – Code APIs Quickly","freeCodeCamp (Tomi Tokko)","Beginner")),
+    P(5,V("fqMOX6JJhGo","Docker Tutorial for Beginners","freeCodeCamp","Beginner")),
+    P(5,V("kCc8FmEb1nY","Let's build GPT from scratch","Andrej Karpathy","Advanced")),
+    P(5,V("zduSFxRajkE","Let's build the GPT Tokenizer","Andrej Karpathy","Advanced"))]},
+  "frontend":{icon:"🎨",title:"Frontend Developer",desc:"Create fast, accessible interfaces for the web.",q:"frontend developer roadmap",videos:[
+    V("PkZNo7MFNFg","Learn JavaScript – Full Course","freeCodeCamp","Beginner"),
+    V("bMknfKXIFA8","React Course for Beginners","freeCodeCamp","Beginner")]},
+  "backend":{icon:"🗄️",title:"Backend Developer",desc:"Build APIs, databases and server-side logic.",q:"backend developer roadmap",videos:[
+    V("HXV3zeQKqGY","SQL Tutorial – Full Database Course for Beginners","freeCodeCamp","Beginner"),
+    V("RGOj5yH7evk","Git and GitHub for Beginners","freeCodeCamp","Beginner"),
+    V("0sOvCWFmrtA","Python API Development – Comprehensive Course","freeCodeCamp (Sanjeev Thiyagarajan)","Advanced"),
+    V("RBSGKlAvoiM","Data Structures Easy to Advanced","William Fiset","Advanced")]},
+  "devops":{icon:"⚙️",title:"DevOps Engineer",desc:"Automate build, deploy and infrastructure at scale.",q:"DevOps engineer roadmap",videos:[
+    V("qiQR5rTSshw","Computer Networking Course – Network Engineering","freeCodeCamp (Brian Ferrill)","Beginner"),
+    V("fqMOX6JJhGo","Docker Tutorial for Beginners","freeCodeCamp","Beginner"),
+    V("SLB_c_ayRMo","Terraform Course – Automate your AWS Cloud Infrastructure","freeCodeCamp (Sanjeev Thiyagarajan)","Advanced"),
+    V("X48VuDVv0do","Kubernetes Tutorial for Beginners","TechWorld with Nana","Advanced")]},
+  "data-science":{icon:"📊",title:"Data Scientist",desc:"Turn raw data into insight with Python, statistics and ML.",q:"data scientist roadmap",videos:[
+    V("rfscVS0vtbw","Learn Python – Full Course","freeCodeCamp","Beginner"),
+    V("HXV3zeQKqGY","SQL Tutorial – Full Database Course for Beginners","freeCodeCamp","Beginner"),
+    V("gtjxAH8uaP0","Pandas & Python for Data Analysis – Full Course","freeCodeCamp (Santiago Basulto)","Beginner"),
+    V("r-uOLxNrNk8","Data Analysis with Python – Pandas, Matplotlib, Seaborn","freeCodeCamp (Santiago Basulto)","Beginner"),
+    V("fNk_zzaMoSs","Vectors: Essence of Linear Algebra","3Blue1Brown","Beginner"),
+    V("i_LwzRVP7bg","Machine Learning for Everybody – Full Course","freeCodeCamp (Kylie Ying)","Advanced"),
+    V("aircAruvnKk","But what is a neural network?","3Blue1Brown","Advanced")]}}},
+"mechanical":{icon:"🛠️",title:"Mechanical Engineering",bg:"#fee2e2",c1:"#b91c1c",c2:"#450a0a",desc:"Design and analyse machines, engines and mechanical systems.",roles:{
+  "design":{icon:"📐",title:"Design Engineer",desc:"Model and draw parts and assemblies in CAD.",q:"mechanical design engineer",videos:[
+    V("CiBwrjUeB8U","SolidWorks – Tutorial for Beginners in 13 Minutes","The Skills Factory","Beginner"),
+    V("G7wnGeR_69k","Understanding GD&T","The Efficient Engineer","Advanced")]},
+  "thermal":{icon:"🔥",title:"Thermal / HVAC Engineer",desc:"Work with heat transfer, cooling and energy systems.",q:"thermal engineer HVAC",videos:[
+    S("s-t1","thermodynamics full course engineering","Browse: Thermodynamics courses","Beginner"),
+    S("s-t2","heat transfer lecture series","Browse: Heat transfer","Advanced")]},
+  "automotive":{icon:"🚗",title:"Automotive Engineer",desc:"Develop engines, drivetrains and electric vehicles.",q:"automotive engineering",videos:[
+    S("s-a1","how engines work explained","Browse: How engines work","Beginner"),
+    S("s-a2","electric vehicle powertrain explained","Browse: EV powertrains","Advanced")]},
+  "robotics":{icon:"🦾",title:"Robotics Engineer",desc:"Build robots that sense, plan and move.",q:"robotics engineer roadmap",videos:[
+    S("s-r1","robotics kinematics introduction","Browse: Robot kinematics","Advanced"),
+    S("s-r2","statics and dynamics engineering mechanics","Browse: Statics and dynamics","Beginner")]}}},
+"electronics":{icon:"⚡",title:"Electronics Engineering",bg:"#fef9c3",c1:"#a16207",c2:"#422006",desc:"Work with circuits, embedded systems and digital hardware.",roles:{
+  "embedded":{icon:"🔌",title:"Embedded Systems Engineer",desc:"Program microcontrollers and hardware-near software.",q:"embedded systems engineer",videos:[
+    V("cNN_tTXABUA","How a CPU Works","In One Lesson","Beginner"),
+    V("zJ-LqeX_fLU","Arduino Course for Beginners – Open-Source Electronics Platform","freeCodeCamp (Ashish Bansal)","Beginner"),
+    V("O6cNvE9ZrVU","STM32 Tutorial #2 – First project in STM32CubeIDE","STM32 tutorial series","Beginner"),
+    V("WT_wqCAuR-c","STM32 Tutorial #5 – Debugging in-circuit","STM32 tutorial series","Advanced"),
+    V("sdr0EFT2LqU","STM32 Tutorial #8 – Introduction to timers","STM32 tutorial series","Advanced")]},
+  "vlsi":{icon:"🧠",title:"VLSI / Chip Designer",desc:"Design digital chips and processors.",q:"VLSI design engineer",videos:[
+    V("1I5ZMmrOfnA","Exploring How Computers Work","Sebastian Lague","Beginner"),
+    S("s-v1","VLSI design basics","Browse: VLSI basics","Advanced")]},
+  "power":{icon:"🔋",title:"Power Electronics Engineer",desc:"Design converters, motor drives and power supplies.",q:"power electronics engineer",videos:[
+    S("s-p1","basic electronics circuits ohm's law tutorial","Browse: Circuit basics","Beginner"),
+    S("s-p2","power electronics buck boost converter","Browse: Power converters","Advanced")]},
+  "telecom":{icon:"📡",title:"Telecom / RF Engineer",desc:"Work on wireless, signals and communication systems.",q:"RF engineer telecom",videos:[
+    S("s-c1","how wireless communication works","Browse: Wireless basics","Beginner"),
+    S("s-c2","5G explained engineering","Browse: 5G explained","Advanced")]}}},
+"cyber":{icon:"🛡️",title:"Cybersecurity",bg:"#dcfce7",c1:"#15803d",c2:"#052e16",desc:"Protect systems, networks and data from threats.",roles:{
+  "soc":{icon:"🔍",title:"Security Analyst (SOC)",desc:"Monitor, detect and respond to security incidents.",q:"SOC analyst roadmap",videos:[
+    V("qiQR5rTSshw","Computer Networking Course – Network Engineering","freeCodeCamp (Brian Ferrill)","Beginner"),
+    S("s-s2","SOC analyst tutorial SIEM Splunk","Browse: SIEM and Splunk","Advanced")]},
+  "pentest":{icon:"🕵️",title:"Ethical Hacker / Pen Tester",desc:"Legally test systems to find weaknesses before attackers do.",q:"ethical hacking penetration testing roadmap",videos:[
+    V("3FNYvj2U0HM","Ethical Hacking in 15 Hours – Part 1","The Cyber Mentor (TCM Security)","Beginner"),
+    V("sH4JCwjybGs","Ethical Hacking in 15 Hours – Part 2","The Cyber Mentor (TCM Security)","Advanced"),
+    S("s-h2","web application security OWASP top 10 explained","Browse: OWASP Top 10","Advanced")]},
+  "network-sec":{icon:"🌐",title:"Network Security Engineer",desc:"Secure networks with firewalls, VPNs and monitoring.",q:"network security engineer",videos:[
+    V("qiQR5rTSshw","Computer Networking Course – Network Engineering","freeCodeCamp (Brian Ferrill)","Beginner"),
+    S("s-n2","firewall and IDS IPS explained","Browse: Firewalls and IDS/IPS","Advanced")]},
+  "cloud-sec":{icon:"☁️",title:"Cloud Security Engineer",desc:"Secure cloud infrastructure, identities and workloads.",q:"cloud security engineer",videos:[
+    S("s-l1","cloud security fundamentals AWS Azure","Browse: Cloud security basics","Beginner"),
+    S("s-l2","IAM best practices cloud security","Browse: Identity and access (IAM)","Advanced")]},
+  "forensics":{icon:"🧪",title:"Digital Forensics Analyst",desc:"Investigate incidents and recover digital evidence.",q:"digital forensics analyst",videos:[
+    S("s-f1","digital forensics introduction","Browse: Forensics intro","Beginner"),
+    S("s-f2","incident response process explained","Browse: Incident response","Advanced")]}}}
+};
+// Set EMBED=true when you host this file on your own site (or open it locally) to play videos in a popup.
+// On claude.ai the iframe is blocked, so videos open on YouTube via normal links.
+const EMBED=!/claude/i.test(location.hostname);
+// Generated SVG illustrations used as card artwork (no external images needed)
+const W='stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"';
+const rep=(n,f)=>Array.from({length:n},(_,i)=>f(i)).join("");
+const ART={
+ code:()=>`<g fill="#fff">${[[70,50,90,1],[90,72,130,.7],[90,94,70,.7],[70,116,110,1]].map(a=>`<rect x="${a[0]}" y="${a[1]}" width="${a[2]}" height="10" rx="5" opacity="${a[3]}"/>`).join("")}</g><text x="236" y="112" font-size="48" font-weight="700" fill="#fff" font-family="monospace">{}</text>`,
+ git:()=>`<g ${W}><path d="M100 140V45"/><path d="M100 105C100 75 175 95 175 62"/><path d="M175 62V140" opacity=".5"/></g><g fill="#fff"><circle cx="100" cy="45" r="9"/><circle cx="100" cy="105" r="9"/><circle cx="175" cy="62" r="9"/><circle cx="100" cy="140" r="9"/><circle cx="235" cy="100" r="9" opacity=".6"/></g>`,
+ tree:()=>`<g ${W}><path d="M160 50L110 100M160 50L210 100M110 100L80 140M110 100L140 140M210 100L180 140M210 100L240 140"/></g><g fill="#fff"><circle cx="160" cy="50" r="12"/><circle cx="110" cy="100" r="10"/><circle cx="210" cy="100" r="10"/>${[80,140,180,240].map(x=>`<circle cx="${x}" cy="140" r="8"/>`).join("")}</g>`,
+ matrix:()=>`<g fill="#fff">${rep(16,i=>`<rect x="${100+(i%4)*32}" y="${42+Math.floor(i/4)*28}" width="26" height="22" rx="4" opacity="${.35+((i*7)%5)*.15}"/>`)}</g>`,
+ table:()=>`<rect x="70" y="42" width="180" height="96" rx="8" ${W}/><path d="M70 66H250M130 42V138M190 42V138M70 92H250M70 116H250" ${W} opacity=".6"/><rect x="72" y="44" width="176" height="20" rx="6" fill="#fff" opacity=".35"/>`,
+ bars:()=>`<g fill="#fff">${[40,75,55,100,85].map((h,i)=>`<rect x="${78+i*38}" y="${142-h}" width="26" height="${h}" rx="5" opacity="${.5+i*.1}"/>`).join("")}</g><path d="M66 146H262" ${W}/>`,
+ vec:()=>`<g ${W}><path d="M90 140L210 60"/><path d="M90 140L240 120" opacity=".7"/><path d="M200 56L212 60L204 72"/><path d="M228 108L240 120L226 126" opacity=".7"/></g><circle cx="90" cy="140" r="6" fill="#fff"/>`,
+ scatter:()=>`<g fill="#fff">${[[90,120],[115,105],[135,112],[160,85],[185,92],[205,68],[230,60],[150,100],[120,125],[215,82]].map(a=>`<circle cx="${a[0]}" cy="${a[1]}" r="6" opacity=".85"/>`).join("")}</g><path d="M80 130L245 52" ${W} stroke-dasharray="2 8"/>`,
+ net:()=>{const L=[[3,80],[4,140],[4,200],[2,260]];let c="",n="";L.forEach((l,li)=>{for(let i=0;i<l[0];i++){const y=90-(l[0]-1)*17+i*34;L[li+1]&&Array.from({length:L[li+1][0]},(_,j)=>{const y2=90-(L[li+1][0]-1)*17+j*34;c+=`<path d="M${l[1]-60+0} ${y}L${L[li+1][1]-60} ${y2}" opacity=".35"/>`});n+=`<circle cx="${l[1]-60}" cy="${y}" r="8"/>`}});return `<g ${W} stroke-width="1.5" transform="translate(50 0)">${c}</g><g fill="#fff" transform="translate(50 0)">${n}</g>`},
+ graph:()=>`<g ${W}><path d="M95 60L160 90M95 120L160 90M160 90L225 90" /></g><g fill="#fff"><rect x="70" y="46" width="40" height="28" rx="8"/><rect x="70" y="106" width="40" height="28" rx="8"/><circle cx="160" cy="90" r="18"/><rect x="205" y="74" width="40" height="32" rx="8" opacity=".7"/></g><path d="M240 140C200 160 130 160 100 142" ${W} stroke-dasharray="3 7" opacity=".7"/>`,
+ cube:()=>`<g ${W}><path d="M120 70L170 50L230 70L230 125L170 145L120 125Z"/><path d="M120 70L170 90L230 70M170 90V145"/></g><path d="M170 90L120 70L170 50L230 70Z" fill="#fff" opacity=".25"/>`,
+ chat:()=>`<rect x="70" y="42" width="130" height="44" rx="14" fill="#fff" opacity=".9"/><rect x="120" y="98" width="130" height="44" rx="14" fill="#fff" opacity=".45"/><g fill="#1e1b4b" opacity=".6"><circle cx="100" cy="64" r="4"/><circle cx="118" cy="64" r="4"/><circle cx="136" cy="64" r="4"/></g>`,
+ bolt:()=>`<path d="M178 40L118 100H158L142 142L206 78H166Z" fill="#fff"/><g ${W} opacity=".5"><path d="M82 70H104M82 110H100M222 70H246M228 110H250"/></g>`,
+ box:()=>`<g ${W}>${rep(3,i=>`<rect x="${84+i*52}" y="${70}" width="44" height="40" rx="6"/>`)}<path d="M72 126H266" /></g><g fill="#fff" opacity=".35">${rep(3,i=>`<rect x="${84+i*52}" y="70" width="44" height="40" rx="6"/>`)}</g>`,
+ blocks:()=>`<g fill="#fff">${rep(4,i=>`<rect x="100" y="${36+i*28}" width="120" height="20" rx="6" opacity="${.9-i*.15}"/>`)}</g><path d="M240 56V132M240 56L232 66M240 56L248 66" ${W} opacity=".6"/>`,
+ tokens:()=>`<g fill="#fff">${[["Let",70,50],["'s",125,50],["build",160,50],["GPT",90,96],["from",150,96],["…",212,96]].map(t=>`<rect x="${t[1]}" y="${t[2]}" width="${t[0].length*13+22}" height="30" rx="8" opacity=".85"/>`).join("")}</g><g font-family="monospace" font-size="15" fill="#1e1b4b" font-weight="700">${[["Let",70,50],["'s",125,50],["build",160,50],["GPT",90,96],["from",150,96],["…",212,96]].map(t=>`<text x="${t[1]+11}" y="${t[2]+20}">${t[0]}</text>`).join("")}</g>`
+,
+ gear:()=>{const g=(cx,cy,r,t)=>`<g transform="translate(${cx} ${cy})"><circle r="${r}" ${W}/><circle r="${Math.round(r*.35)}" ${W}/>${Array.from({length:t},(_,i)=>`<rect x="-5" y="${-r-10}" width="10" height="12" rx="2" fill="#fff" transform="rotate(${i*360/t})"/>`).join("")}</g>`;return g(130,98,34,8)+g(205,66,22,6)},
+ flame:()=>`<path d="M160 34C176 66 206 80 196 118C190 140 170 148 160 148C136 148 124 130 130 108C136 118 144 120 148 116C140 92 150 62 160 34Z" fill="#fff" opacity=".9"/><path d="M160 98C168 112 178 118 172 132C168 142 160 144 156 142C146 138 146 124 150 118C154 124 157 124 158 122C156 114 158 106 160 98Z" fill="#000" opacity=".25"/>`,
+ circuit:()=>`<g ${W}><path d="M70 60H130V110H200M130 60H250M200 110V140H260M90 140H150"/></g><g fill="#fff"><circle cx="70" cy="60" r="7"/><circle cx="250" cy="60" r="7"/><circle cx="260" cy="140" r="7"/><circle cx="90" cy="140" r="7"/></g><rect x="145" y="82" width="46" height="30" rx="5" fill="#fff" opacity=".85"/>`,
+ wave:()=>`<path d="M40 92C70 30 100 30 130 92S190 154 220 92S265 44 285 70" ${W}/><g ${W} opacity=".6"><path d="M160 150V118M146 150H174M160 118L145 98M160 118L175 98"/></g>`,
+ shield:()=>`<path d="M160 34L214 54V96C214 124 190 142 160 152C130 142 106 124 106 96V54Z" fill="#fff" opacity=".92"/><path d="M138 94L154 110L184 78" stroke="rgba(0,0,0,.55)" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+ network:()=>`<g ${W} stroke-width="2.5" opacity=".7"><path d="M160 90L90 54M160 90L230 54M160 90L80 130M160 90L240 130M160 90V150"/></g><g fill="#fff"><circle cx="160" cy="90" r="15"/>${[[90,54],[230,54],[80,130],[240,130],[160,150]].map(a=>`<circle cx="${a[0]}" cy="${a[1]}" r="9" opacity=".85"/>`).join("")}</g>`,
+ cloud:()=>`<path d="M104 126C76 126 72 90 100 86C104 58 146 52 160 78C186 64 216 84 210 108C236 108 240 132 210 132H116Z" fill="#fff" opacity=".92"/>`,
+ server:()=>`<g fill="#fff">${[40,84,128].map((y,i)=>`<rect x="90" y="${y}" width="140" height="34" rx="8" opacity="${.9-i*.2}"/>`).join("")}</g><g fill="rgba(0,0,0,.45)">${[40,84,128].map(y=>`<circle cx="110" cy="${y+17}" r="5"/><rect x="190" y="${y+13}" width="28" height="8" rx="4"/>`).join("")}</g>`,
+ eye:()=>`<path d="M60 90C100 40 220 40 260 90C220 140 100 140 60 90Z" ${W}/><circle cx="160" cy="90" r="24" fill="#fff"/><circle cx="160" cy="90" r="10" fill="rgba(0,0,0,.5)"/>`
+};
+const VART={"rfscVS0vtbw":"code","RGOj5yH7evk":"git","RBSGKlAvoiM":"tree","QUT1VHiLmmI":"matrix","gtjxAH8uaP0":"table","r-uOLxNrNk8":"bars","fNk_zzaMoSs":"vec","i_LwzRVP7bg":"scatter","aircAruvnKk":"net","VMj-3S1tku0":"graph","V_xro1bcAuA":"cube","zjkBMFhNj_g":"chat","tLKKmouUams":"bolt","fqMOX6JJhGo":"box","kCc8FmEb1nY":"blocks","zduSFxRajkE":"tokens","PkZNo7MFNFg":"code","bMknfKXIFA8":"tree","X48VuDVv0do":"box","cNN_tTXABUA":"matrix","1I5ZMmrOfnA":"cube","HXV3zeQKqGY":"table","0sOvCWFmrtA":"bolt","qiQR5rTSshw":"network","SLB_c_ayRMo":"cloud","zJ-LqeX_fLU":"circuit","3FNYvj2U0HM":"shield","sH4JCwjybGs":"eye"};
+const KW=[[/cloud|aws|azure|iam/i,"cloud"],[/forensic|incident|siem|splunk|soc /i,"eye"],[/secur|hack|owasp|firewall|ids/i,"shield"],[/network|wireless|5g|rf |telecom/i,"wave"],[/thermo|heat|hvac/i,"flame"],[/engine|motor|gear|mechanic|statics|dynamics|cad|solidworks|gd&t|robot|kinematic|powertrain|vehicle/i,"gear"],[/circuit|ohm|arduino|stm32|embedded|vlsi|chip|power|converter|electronic/i,"circuit"],[/server|database|sql/i,"server"]];
+const artKey=v=>VART[v.id]||(KW.find(k=>k[0].test((v.q||"")+" "+v.title))||[0,"code"])[1];
+const art=v=>`<svg class="ti" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${ART[artKey(v)]()}</svg>`;
+const $=id=>document.getElementById(id);
+let F=null,R=null,level="All",done={};
+try{done=JSON.parse(localStorage.getItem("lp-done")||"{}")}catch(e){}
+const save=()=>{try{localStorage.setItem("lp-done",JSON.stringify(done))}catch(e){}};
+const key=(f,r,id)=>f+"/"+r+"/"+id;
+const rcount=(f,r)=>FIELDS[f].roles[r].videos.filter(v=>done[key(f,r,v.id)]).length;
+const allRoles=()=>Object.entries(FIELDS).flatMap(([f,x])=>Object.entries(x.roles).map(([r,y])=>[f,r,y]));
+
+const tv=allRoles().reduce((n,[,,y])=>n+y.videos.filter(v=>!v.q).length,0);
+$("stats").innerHTML=`<div><b>${Object.keys(FIELDS).length}</b><span>Fields</span></div><div><b>${allRoles().length}</b><span>Roles</span></div><div><b>${tv}</b><span>Direct videos</span></div>`;
+
+function show(id){["home","field","detail","results"].forEach(s=>$(s).hidden=s!==id);window.scrollTo(0,0)}
+function renderHome(){
+  $("roles").innerHTML=Object.entries(FIELDS).map(([k,f])=>`<button class="role" data-k="${k}">
+    <div class="badge-ic" style="background:${f.bg}">${f.icon}</div><h3>${f.title}</h3><p>${f.desc}</p>
+    <div class="foot"><span>${Object.keys(f.roles).length} roles</span><em>Explore →</em></div></button>`).join("");
+}
+function openField(f){F=f;R=null;const x=FIELDS[f];show("field");
+  $("fcrumb").textContent=x.title;$("ftitle").textContent=x.title;$("fdesc").textContent=x.desc;
+  $("fico").textContent=x.icon;$("fico").style.background=x.bg;
+  $("froles").innerHTML=Object.entries(x.roles).map(([r,y])=>`<button class="role" data-r="${r}">
+    <div class="badge-ic" style="background:${x.bg}">${y.icon}</div><h3>${y.title}</h3><p>${y.desc}</p>
+    <div class="foot"><span>${y.videos.length} items · ${rcount(f,r)} watched</span><em>View videos →</em></div></button>`).join("")}
+function openRole(f,r){F=f;R=r;level="All";const x=FIELDS[f],y=x.roles[r];show("detail");
+  $("b2").textContent=x.title;$("crumb").textContent=y.title;$("rtitle").textContent=y.title;$("rdesc").textContent=y.desc;
+  $("rico").textContent=y.icon;$("rico").style.background=x.bg;
+  $("more").href="https://www.youtube.com/results?search_query="+encodeURIComponent(y.q);renderDetail()}
+function card(f,r,v,showRole){
+  const x=FIELDS[f],d=done[key(f,r,v.id)];
+  const href=v.q?"https://www.youtube.com/results?search_query="+encodeURIComponent(v.q):"https://www.youtube.com/watch?v="+v.id;
+  const embedHtml=`<div class="player"><iframe src="https://www.youtube.com/embed/${v.id}" title="${v.title}" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>`;
+  const lk=h=>(v.q||!EMBED)?`<a class="tl" href="${href}" target="_blank" rel="noopener">${h}</a>`:h;
+  return `<div class="vid ${d?"done":""}" data-f="${f}" data-r="${r}" data-id="${v.id}" data-t="${v.title}" data-q="${v.q||""}">
+    ${(!v.q&&EMBED)?embedHtml:lk(`<div class="thumb" style="background:linear-gradient(135deg,${x.c1},${x.c2})">${art(v)}${v.q?"":`<img class="ti" loading="lazy" alt="" src="https://img.youtube.com/vi/${v.id}/hqdefault.jpg" onerror="this.remove()">`}<span class="lvl">${v.level}</span><div class="play">${v.q?"↗":"▶"}</div></div>`)}
+    <div class="meta"><b>${lk(v.title)}</b><span class="by">${v.by}${showRole?" · "+x.roles[r].title:""}</span>
+    ${v.q?"":`<a class="yt" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">Watch on YouTube ↗</a>`}
+    <button class="watch" data-w="1"><span class="cb">${d?"✓":""}</span>${d?"Watched":"Mark as watched"}</button></div></div>`;
+}
+function renderDetail(){
+  const y=FIELDS[F].roles[R],c=rcount(F,R),n=y.videos.length;
+  $("ptext").textContent=`${c} of ${n} watched`;$("fill").style.width=(c/n*100)+"%";
+  $("filters").innerHTML=["All","Beginner","Advanced"].map(l=>`<button class="chip ${l===level?"on":""}" data-l="${l}">${l}</button>`).join("");
+  const list=y.videos.filter(v=>level==="All"||v.level===level);
+  $("grid").className=y.phases?"":"grid";
+  if(y.phases){$("grid").innerHTML=list.length?y.phases.map(ph=>{const l=list.filter(v=>v.p===ph.n);
+    return l.length?`<div class="phase"><div class="ph-head"><span class="ph-n">Phase ${ph.n}</span><span class="ph-m">${ph.months}</span><h3>${ph.title}</h3><p>${ph.desc}</p></div><div class="grid">${l.map(v=>card(F,R,v)).join("")}</div></div>`:""}).join(""):`<p class="empty">No videos at this level yet.</p>`;}
+  else $("grid").innerHTML=list.length?list.map(v=>card(F,R,v)).join(""):`<p class="empty">No videos at this level yet.</p>`;
+}
+function home(){F=R=null;$("q").value="";renderHome();show("home")}
+
+$("roles").onclick=e=>{const b=e.target.closest(".role");if(b)openField(b.dataset.k)};
+$("froles").onclick=e=>{const b=e.target.closest(".role");if(b)openRole(F,b.dataset.r)};
+$("b0").onclick=home;$("b1").onclick=home;$("logo").onclick=home;$("b2").onclick=()=>openField(F);
+$("filters").onclick=e=>{const c=e.target.closest(".chip");if(c){level=c.dataset.l;renderDetail()}};
+function vidClick(e){
+  const c=e.target.closest(".vid");if(!c||e.target.closest("a"))return;
+  if(e.target.closest("[data-w]")){const k=key(c.dataset.f,c.dataset.r,c.dataset.id);done[k]=!done[k];save();
+    if(R)renderDetail();else runSearch();return}
+  if(c.dataset.q){window.open("https://www.youtube.com/results?search_query="+encodeURIComponent(c.dataset.q),"_blank","noopener");return}
+  if(EMBED)return;
+  play(c.dataset.id,c.dataset.t);
+}
+$("grid").onclick=vidClick;$("rgrid").onclick=vidClick;
+
+function runSearch(){
+  const t=$("q").value.trim().toLowerCase();
+  if(!t){R?show("detail"):F?show("field"):home();return}
+  const hits=[];allRoles().forEach(([f,r,y])=>y.videos.forEach(v=>{
+    if((v.title+" "+v.by+" "+y.title+" "+FIELDS[f].title).toLowerCase().includes(t))hits.push([f,r,v])}));
+  show("results");$("rtext").textContent=`${hits.length} result${hits.length===1?"":"s"} for “${$("q").value.trim()}”`;
+  $("rgrid").innerHTML=hits.map(([f,r,v])=>card(f,r,v,true)).join("")||`<p class="empty">No matching videos. Try another keyword.</p>`;
+}
+$("q").oninput=runSearch;
+
+function play(id,title){$("mtitle").textContent=title;
+  $("player").src="https://www.youtube.com/embed/"+id+"?rel=0";
+  $("ytlink").href="https://www.youtube.com/watch?v="+id;$("modal").classList.add("open")}
+function closeM(){$("modal").classList.remove("open");$("player").src=""}
+$("close").onclick=closeM;$("modal").onclick=e=>{if(e.target===$("modal"))closeM()};
+document.onkeydown=e=>{if(e.key==="Escape")closeM()};
+renderHome();
+</script>
+</body>
+</html>
